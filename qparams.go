@@ -3,7 +3,6 @@ package qparams
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"reflect"
 	"strings"
@@ -27,6 +26,7 @@ func (s *Slice) ToIntAtIndex(i int) int {
 var DestTypeError = errors.New("Dest must be a struct pointer")
 
 var separator = ","
+var mapOpsTagSeparator = ","
 
 // Parse will try to parse query params from http.Request to
 // provided struct, and will return error on filure
@@ -35,7 +35,7 @@ func Parse(dest interface{}, r *http.Request) error {
 	v := reflect.ValueOf(dest)
 	queryValues := r.URL.Query()
 
-	if t.Kind() != reflect.Ptr &&
+	if t.Kind() != reflect.Ptr ||
 		t.Elem().Kind() != reflect.Struct {
 		return DestTypeError
 	}
@@ -103,9 +103,28 @@ func getSeparator(sField reflect.StructField) string {
 	return sep
 }
 
+func getOperators(sField reflect.StructField) []string {
+	operators := []string{}
+
+	if ops := getTag("ops", sField); ops != "" {
+		operators = strings.Split(ops, mapOpsTagSeparator)
+	}
+
+	return operators
+}
+
 func parseMap(sField reflect.StructField, fieldV reflect.Value, queryValue string) {
 	sep := getSeparator(sField)
-	fmt.Printf("Map Separator %s\n", sep)
+
+	operators := getOperators(sField)
+
+	// TODO - handle error
+	parsedMap, err := walk(queryValue, sep, operators)
+	if err != nil {
+		parsedMap = make(Map)
+	}
+
+	fieldV.Set(reflect.ValueOf(parsedMap))
 }
 
 func parseSlice(sField reflect.StructField, fieldV reflect.Value, queryValue string) {

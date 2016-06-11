@@ -49,6 +49,19 @@ func compare(t *testing.T, c testCase, got interface{}, err error) {
 
 // MARK - Tests
 
+func TestWrontDest(t *testing.T) {
+	foo := struct{}{}
+	r := newRequest("foo")
+
+	err := Parse(foo, r)
+
+	if err == DestTypeError {
+		pass(t, "Test pass", DestTypeError, err)
+	} else {
+		failFatal(t, "Test pass", DestTypeError, err)
+	}
+}
+
 func TestParseSlice(t *testing.T) {
 	type testStruct struct {
 		Embed Slice
@@ -131,6 +144,104 @@ func TestParseSliceCustomSeparator(t *testing.T) {
 
 	t.Log("")
 	t.Log("Testing slice parsing with custom separator")
+
+	for _, c := range table {
+		opts := testStruct{}
+		r := newRequest(c.URL)
+		err := Parse(&opts, r)
+
+		compare(t, c, opts, err)
+	}
+}
+
+func TestParseMap(t *testing.T) {
+	type testStruct struct {
+		Filter Map `qparams:"ops:>,==,<=,<,!=,-like-"`
+	}
+
+	table := []testCase{
+		{
+			URL:            "foobar.com?filter=age>7,gender==0,balance<=1000",
+			ExpectedResult: testStruct{Filter: Map{"age >": "7", "gender ==": "0", "balance <=": "1000"}},
+			ExpectedError:  nil,
+		},
+
+		{
+			URL:            "foobar.com?filter=age>8,gender==1,balance<100",
+			ExpectedResult: testStruct{Filter: Map{"age >": "8", "gender ==": "1", "balance <": "100"}},
+			ExpectedError:  nil,
+		},
+
+		{
+			URL:            "foobar.com?filter=Age>8,Gender==1,Balance<100",
+			ExpectedResult: testStruct{Filter: Map{"age >": "8", "gender ==": "1", "balance <": "100"}},
+			ExpectedError:  nil,
+		},
+
+		{
+			URL:            "foobar.com?filter=,Age>8,Gender==1,Balance<100,",
+			ExpectedResult: testStruct{Filter: Map{"age >": "8", "gender ==": "1", "balance <": "100"}},
+			ExpectedError:  nil,
+		},
+
+		{
+			URL:            "foobar.com?filter=aGe!=9,Gender>0,Lastname-like-Doe",
+			ExpectedResult: testStruct{Filter: Map{"age !=": "9", "gender >": "0", "lastname -like-": "Doe"}},
+			ExpectedError:  nil,
+		},
+	}
+
+	t.Log("")
+	t.Log("Testing map parsing")
+
+	for _, c := range table {
+		opts := testStruct{}
+		r := newRequest(c.URL)
+		err := Parse(&opts, r)
+
+		compare(t, c, opts, err)
+	}
+}
+
+func TestParseMapWithCustomSeparator(t *testing.T) {
+	type testStruct struct {
+		Filter Map `qparams:"sep:| ops:>,==,<=,<,!=,-like-"`
+	}
+
+	table := []testCase{
+		{
+			URL:            "foobar.com?filter=age>7|gender==0|balance<=1000",
+			ExpectedResult: testStruct{Filter: Map{"age >": "7", "gender ==": "0", "balance <=": "1000"}},
+			ExpectedError:  nil,
+		},
+
+		{
+			URL:            "foobar.com?filter=age>8|gender==1|balance<100",
+			ExpectedResult: testStruct{Filter: Map{"age >": "8", "gender ==": "1", "balance <": "100"}},
+			ExpectedError:  nil,
+		},
+
+		{
+			URL:            "foobar.com?filter=Age>8|Gender==1|Balance<100",
+			ExpectedResult: testStruct{Filter: Map{"age >": "8", "gender ==": "1", "balance <": "100"}},
+			ExpectedError:  nil,
+		},
+
+		{
+			URL:            "foobar.com?filter=|Age>8|Gender==1|Balance<100|",
+			ExpectedResult: testStruct{Filter: Map{"age >": "8", "gender ==": "1", "balance <": "100"}},
+			ExpectedError:  nil,
+		},
+
+		{
+			URL:            "foobar.com?filter=aGe!=9|Gender>0|Lastname-like-Doe",
+			ExpectedResult: testStruct{Filter: Map{"age !=": "9", "gender >": "0", "lastname -like-": "Doe"}},
+			ExpectedError:  nil,
+		},
+	}
+
+	t.Log("")
+	t.Log("Testing map parsing")
 
 	for _, c := range table {
 		opts := testStruct{}
