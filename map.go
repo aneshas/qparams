@@ -3,15 +3,7 @@ package qparams
 import (
 	"fmt"
 	"strings"
-	"unicode"
 )
-
-func upercaseInitial(str string) string {
-	for i, v := range str {
-		return string(unicode.ToUpper(v)) + str[i+1:]
-	}
-	return ""
-}
 
 func isOperator(c string, operators []string) (bool, int) {
 

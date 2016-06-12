@@ -229,7 +229,7 @@ func TestParseSliceCustomSeparator(t *testing.T) {
 
 func TestParseMap(t *testing.T) {
 	type testStruct struct {
-		Filter Map `qparams:"ops:>,==,<=,<,!=,-like-"`
+		Filter Map `qparams:"ops:>,==,<=,<,!=,-like-,!"`
 	}
 
 	table := []testCase{
@@ -254,6 +254,12 @@ func TestParseMap(t *testing.T) {
 		{
 			URL:            "foobar.com?filter=,Age>8,Gender==1,Balance<100,",
 			ExpectedResult: testStruct{Filter: Map{"age >": "8", "gender ==": "1", "balance <": "100"}},
+			ExpectedError:  nil,
+		},
+
+		{
+			URL:            "foobar.com?filter=,Age>8,Gender==1,Balance<100,foo!bar",
+			ExpectedResult: testStruct{Filter: Map{"age >": "8", "gender ==": "1", "balance <": "100", "foo !": "bar"}},
 			ExpectedError:  nil,
 		},
 
