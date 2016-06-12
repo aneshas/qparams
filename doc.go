@@ -2,5 +2,5 @@
 // go structs, and provides convenience methods for basic converting of
 // parsed parameters (string, int, float64)
 //
-// Example available on the github repo
+// Example available on the github repo page
 package qparams
