@@ -48,22 +48,22 @@ func isOperator(c string, operators []string) (bool, int) {
 	return false, 0
 }
 
-func getValue(str string) (string, int, error) {
+func getValue(str, separator string) (string, int) {
 	var i int
 	var chunk string
 	var c rune
 
 	for i, c = range str {
-		if c != ':' {
+		if c != rune(separator[0]) {
 			chunk += string(c)
 			continue
 		}
 	}
 
-	return chunk, i, nil
+	return chunk, i
 }
 
-func walk(filterRaw string, separator string, operators []string) (map[string]string, error) {
+func walk(filterRaw string, separator string, operators []string) map[string]string {
 	filters := make(Map)
 
 	strSlice := strings.Split(filterRaw, separator)
@@ -96,15 +96,12 @@ func walk(filterRaw string, separator string, operators []string) (map[string]st
 				continue
 			}
 
-			value, _, err := getValue(filter[i+off:])
-			if err != nil {
-				return nil, err
-			}
+			value, _ := getValue(filter[i+off:], separator)
 			key := fmt.Sprintf("%s %s", strings.ToLower(chunk), op)
 
 			filters[key] = value
 		}
 	}
 
-	return filters, nil
+	return filters
 }
