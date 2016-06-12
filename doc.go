@@ -6,7 +6,7 @@
 // import qp “github.com/tonto/qparams”
 //
 // // User defined struct
-//
+///
 // type MyParams struct {
 //	// qparams Map (map[string]string)
 //	// with defined operations (required)
@@ -26,22 +26,22 @@
 //	// Regular primitive values
 //	Limit int
 //	Page int
-//	}
-//
+// }
+///
 // // Your http handler
-//
+///
 // func handler(w http.ResponseWriter, r *http.Request) {
 //	params := MyParams{}
-//
+///
 //	err := qp.Parse(&params, r)
 //	if err != nil {
 //		// Handle error
-//	}
-//
+// }
+///
 //	// at this point params is filled with
 //	// parsed query parameters
 //	//
-//
+///
 //	// Assuming that request URL was:
 //	// http://foo.bar.baz?limit=100&page=2&embed=order,invoice,discount&filter=amount>=1000,currency==EUR,order_number!=753&flags=a|b|c
 //	//
@@ -68,5 +68,5 @@
 //	//
 //	// params.Page
 //	// int 2
-//	}
+// }
 package qparams
