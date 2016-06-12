@@ -5,7 +5,7 @@
 qparams is a golang package that provides url query parameters to be decoded to user defined golang structs with custom fields.
 
 # Example usage
-```
+```go
 import qp “github.com/tonto/qparams”
 
 // User defined struct
