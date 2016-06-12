@@ -146,6 +146,38 @@ func TestParseSlice(t *testing.T) {
 	}
 }
 
+func TestUnderscoreParams(t *testing.T) {
+	type testStruct struct {
+		EmbedDashed Slice `qparams:"name:embed_dashed"`
+		FooBar      int   `qparams:"name:foo-bar"`
+	}
+
+	table := []testCase{
+		{
+			URL:            "foobar.com?embed_dashed=User,Order,Discount",
+			ExpectedResult: testStruct{EmbedDashed: Slice{"user", "order", "discount"}},
+			ExpectedError:  nil,
+		},
+
+		{
+			URL:            "foobar.com?embed_dashed=User,Order,Discount&foo-bar=7",
+			ExpectedResult: testStruct{EmbedDashed: Slice{"user", "order", "discount"}, FooBar: 7},
+			ExpectedError:  nil,
+		},
+	}
+
+	t.Log("")
+	t.Log("Testing parameters with custom names")
+
+	for _, c := range table {
+		opts := testStruct{}
+		r := newRequest(c.URL)
+		err := Parse(&opts, r)
+
+		compare(t, c, opts, err)
+	}
+}
+
 func TestParseSliceCustomSeparator(t *testing.T) {
 	type testStruct struct {
 		Embed Slice `qparams:"sep:|"`

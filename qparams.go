@@ -121,6 +121,10 @@ func Parse(dest interface{}, r *http.Request) error {
 
 		fieldName := strings.ToLower(fieldT.Name)
 
+		if tagFieldName := getTag("name", fieldT); tagFieldName != "" {
+			fieldName = tagFieldName
+		}
+
 		for key, val := range queryValues {
 			key = strings.ToLower(key)
 			queryValues[key] = val

@@ -19,7 +19,10 @@ type MyParams struct {
 	// with custom separator
 	Flags qp.Slice `qparams:”sep:|”`
 
-	// Int values
+    // field with custom query param name (lowercase is the default)
+    FooBar string `qparams:"name:foo-bar"`
+
+	// Regular primitive values
 	Limit int
 	Page int
 }

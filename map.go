@@ -20,6 +20,7 @@ func isOperator(c string, operators []string) (bool, int) {
 			return true, len(c)
 		}
 	}
+
 	if len(c) >= 4 {
 		single := c[0:4]
 		for _, o := range operators {
