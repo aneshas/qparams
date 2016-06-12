@@ -1,7 +1,7 @@
 # qparams
 ### `import “github.com/tonto/qparams”`
-[![Build Status](https://travis-ci.org/tonto/qparams.svg?branch=master)](https://travis-ci.org/tonto/qparams) [![Coverage Status](https://coveralls.io/repos/github/tonto/qparams/badge.svg?branch=master)](https://coveralls.io/github/tonto/qparams?branch=master)
-
+[![Build Status](https://travis-ci.org/tonto/qparams.svg?branch=master)](https://travis-ci.org/tonto/qparams)  [![Coverage Status](https://coveralls.io/repos/github/tonto/qparams/badge.svg?branch=master)](https://coveralls.io/github/tonto/qparams?branch=master)
+ 
 qparams is a golang package that provides url query parameters to be decoded to user defined golang structs with custom fields.
 
 # Example usage
